@@ -1,8 +1,7 @@
 <?php
 
-use GuzzleHttp\Exception\GuzzleException;
 
-require 'vendor/autoload.php';
+
 require 'TelegramBot.php';
 
 ini_set('max_execution_time', 300);
@@ -16,9 +15,10 @@ while (true) {
 
     foreach ($updates as $update) {
 
-        if (isset($update['message'])) {
+
             $chatId = $update['message']['chat']['id'];
             $text = $update['message']['text'];
+
 
             if ($text === "/start") {
                 $telegramApi->sendMessage("Привет, хочешь доступ? Пиши: Хочу доступ", $chatId);
@@ -40,7 +40,7 @@ while (true) {
             } else {
                 $telegramApi->sendMessage("Пробуй ещё раз!", $chatId);
             }
-        }
+
     }
 
 

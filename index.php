@@ -19,34 +19,64 @@ function sendMessage($chatId, $text)
     return $response;
 }
 
-while (true) {
-    $offsetParam=$offset+1;
-    $updateUrl .= "?offset=$offsetParam";
-    $response = file_get_contents($updateUrl);
-    $updates = json_decode($response, true);
-    if (!empty($updates['result'])) {
-        $offset = $updates['result'][count($updates['result']) - 1]['update_id'];
+ function query($method, $params=[])
+{
+    global $token;
+    $url = "https://api.telegram.org/bot" . $token . "/" . $method;
+
+    if (!empty($params)) {
+        $url .= "?" . http_build_query($params);
     }
 
-    foreach ($updates['result'] as $update) {
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    $result = curl_exec($ch);
+
+    curl_close($ch);
+
+    return json_decode($result, true);
+}
+
+function getUpdates()
+{
+    global $offset;
+    $response = query('getUpdates',['offset'=>$offset+1]);
+
+    if (!empty($response['result'])) {
+        $offset = $response['result'][count($response['result']) - 1]['update_id'];
+    }
+    return $response['result'];
+}
+
+while (true) {
+
+    $updates=getUpdates();
+
+    foreach ($updates as $update) {
 
         if (isset($update['message'])) {
             $chatId = $update['message']['chat']['id'];
             $text = $update['message']['text'];
 
             if ($text === "/start") {
-                sendMessage($chatId, "Привет, хочешь доступ? ПишиЖ Хочу доступ");
+                sendMessage($chatId, "Привет, хочешь доступ? Пиши: Хочу доступ");
+
             } elseif ($text == 'Хочу доступ') {
                 $number1 = rand(1, 50);
                 $number2 = rand(1, 50);
                 $correctAnswer = $number1 + $number2;
 
-                sendMessage("Реши пример: $number1 + $number2");
+                sendMessage($chatId,"Реши пример: $number1 + $number2");
 
                 $answers[$chatId] = $correctAnswer;
+
             } elseif (isset($answers[$chatId]) && $text == $answers[$chatId]) {
+
                 sendMessage($chatId, "https://www.youtube.com/watch?v=jxCK3PbnL2U");
                 unset($answers[$chatId]);
+
             } else {
                 sendMessage($chatId, "Пробуй ещё раз!");
             }

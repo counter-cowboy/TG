@@ -13,7 +13,14 @@ class TelegramBot
             $url .= "?" . http_build_query($params);
         }
 
-        $result = file_get_contents($url);
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        $result = curl_exec($ch);
+
+        curl_close($ch);
+
         return json_decode($result, true);
     }
 
