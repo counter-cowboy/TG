@@ -1,8 +1,5 @@
 <?php
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
-
 class TelegramBot
 {
     protected string $token = "5921769353:AAH5-UgHdLYfubuKSyZffWm2Y-sKsLsDGjY";
@@ -15,11 +12,9 @@ class TelegramBot
         if (!empty($params)) {
             $url .= "?" . http_build_query($params);
         }
-        $client = new Client([
-            'base_uri' => $url
-        ]);
-        $result = $client->request('GET');
-        return json_decode($result->getBody(), true);
+
+        $result = file_get_contents($url);
+        return json_decode($result, true);
     }
 
     public function getUpdates()
@@ -32,12 +27,17 @@ class TelegramBot
         return $response['result'];
     }
 
-    public function sendMessage($text, $chat_id)
+    public function sendMessage($text, $chatId)
     {
-        $response = $this->query('sendMessage', [
-            'chat_id' => $chat_id,
-            'text' => $text,
-        ]);
+        global $token;
+        $url = "https://api.telegram.org/bot{$token}/sendMessage?";
+        $data = ['chat_id' => $chatId, 'text' => $text];
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        $response = curl_exec($ch);
+        curl_close($ch);
         return $response;
     }
 

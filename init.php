@@ -5,13 +5,9 @@ use GuzzleHttp\Exception\GuzzleException;
 require 'vendor/autoload.php';
 require 'TelegramBot.php';
 
+ini_set('max_execution_time', 300);
+
 $telegramApi = new TelegramBot();
-
-
-//echo $updates;
-//print_r($updates);
-
-//print_r($updates['result'][0]['message']['chat']['id']);
 
 while (true) {
     sleep(1);
@@ -20,19 +16,51 @@ while (true) {
 
     foreach ($updates as $update) {
 
-        if ($update['message']['text'] === "/start") {
+        if (isset($update['message'])) {
+            $chatId = $update['message']['chat']['id'];
+            $text = $update['message']['text'];
 
-            $userQuestionId = $update['message']['chat']['id'];
+            if ($text === "/start") {
+                $telegramApi->sendMessage("Привет, хочешь доступ? Пиши: Хочу доступ", $chatId);
 
-            $telegramApi->sendMessage("Count this '2' + 2", $userQuestionId);
+            } elseif ($text == 'Хочу доступ') {
+                $number1 = rand(1, 50);
+                $number2 = rand(1, 50);
+                $correctAnswer = $number1 + $number2;
+
+                $telegramApi->sendMessage("Реши пример: $number1 + $number2", $chatId);
+                echo $correctAnswer;
+
+                $answers[$chatId] = $correctAnswer;
+
+            } elseif (isset($answers[$chatId]) && $text == $answers[$chatId]) {
+                $telegramApi->sendMessage("https://www.youtube.com/watch?v=jxCK3PbnL2U", $chatId);
+                unset($answers[$chatId]);
+
+            } else {
+                $telegramApi->sendMessage("Пробуй ещё раз!", $chatId);
+            }
         }
+    }
 
 
-//        $telegramApi->sendMessage('Hi!', $update['message']['chat']['id']);
-    }
-    foreach ($updates as $update) {
-        if ($update['message']['chat']['id'] == $userQuestionId && $update['message']['text'] == "22") {
-            $telegramApi->sendMessage('You are right!!', $userQuestionId);
-        }
-    }
+//    foreach ($updates as $update) {
+//
+//        if ($update['message']['text'] === "/start") {
+//
+//            $userQuestionId = $update['message']['chat']['id'];
+//
+//            $telegramApi->sendMessage("Count this '2' + 2", $userQuestionId);
+//        }
+//    }
+//
+//    foreach ($updates as $update) {
+//
+//        if ($update['message']['chat']['id'] == $userQuestionId && $update['message']['text'] == "22") {
+//            $telegramApi->sendMessage('You are right!!', $userQuestionId);
+//        }
+////        if ($update['message']['chat']['id'] == $userQuestionId && $update['message']['text'] != "22"){
+////            $telegramApi->sendMessage('You are wrong(((', $userQuestionId);
+////        }
+//    }
 }
