@@ -4,6 +4,7 @@ require_once 'TeleBot.php';
 ini_set('max_execution_time', 300);
 
 $telebot = new TeleBot();
+
 while (true) {
 
     $updates = $telebot->getUpdates();
