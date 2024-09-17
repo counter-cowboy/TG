@@ -15,10 +15,8 @@ while (true) {
 
     foreach ($updates as $update) {
 
-
             $chatId = $update['message']['chat']['id'];
             $text = $update['message']['text'];
-
 
             if ($text === "/start") {
                 $telegramApi->sendMessage("Привет, хочешь доступ? Пиши: Хочу доступ", $chatId);
@@ -29,7 +27,6 @@ while (true) {
                 $correctAnswer = $number1 + $number2;
 
                 $telegramApi->sendMessage("Реши пример: $number1 + $number2", $chatId);
-                echo $correctAnswer;
 
                 $answers[$chatId] = $correctAnswer;
 
