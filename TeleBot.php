@@ -3,10 +3,15 @@
 class TeleBot
 {
 
-private $token = "5921769353:AAH5-UgHdLYfubuKSyZffWm2Y-sKsLsDGjY";
-public $offset = 0;
+private string $token;
+public int $offset=0;
+public function __construct()
+{
+    $this->token=file_get_contents('.env');
 
-public function sendMessage($chatId, $text)
+}
+
+    public function sendMessage($chatId, $text)
 {
 
     $url = "https://api.telegram.org/bot{$this->token}/sendMessage?";
