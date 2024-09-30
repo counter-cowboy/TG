@@ -19,7 +19,8 @@ while (true) {
             if ($text === "/start") {
                 $telebot->sendMessage($chatId, "Привет, хочешь доступ? Пиши: Хочу доступ");
 
-            } elseif ($text == 'хочу доступ') {
+            }
+            elseif (mb_strtolower($update['message']['text']) === 'хочу доступ') {
                 $number1 = rand(1, 50);
                 $number2 = rand(1, 50);
                 $correctAnswer = $number1 + $number2;
@@ -31,7 +32,8 @@ while (true) {
                 $answers[$chatId] = $correctAnswer;
                 file_put_contents('tg.json', json_encode($answers));
 
-            } elseif (isset(json_decode(file_get_contents('tg.json'), true)[$chatId])
+            }
+            elseif (isset(json_decode(file_get_contents('tg.json'), true)[$chatId])
                 && $text == json_decode(file_get_contents('tg.json'), true)[$chatId]) {
 
                 $telebot->sendMessage($chatId, "https://www.youtube.com/watch?v=jxCK3PbnL2U");
@@ -45,5 +47,5 @@ while (true) {
             }
         }
     }
-    sleep(1);
+    sleep(.1);
 }
