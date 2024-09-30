@@ -2,7 +2,7 @@
 
 require_once 'TeleBot.php';
 
-
+ini_set('max_execution_time', '300');
 
 $telebot = new TeleBot();
 
@@ -26,17 +26,19 @@ while (true) {
 
                 $telebot->sendMessage($chatId, "Реши пример: $number1 + $number2");
 
-                $answers[]=json_decode(file_get_contents('tg.json'), true);
+                $answers[] = json_decode(file_get_contents('tg.json'), true);
 
                 $answers[$chatId] = $correctAnswer;
-                file_put_contents('tg.json',json_encode($answers[]));
+                file_put_contents('tg.json', json_encode($answers));
 
-            } elseif (isset($answers[$chatId]) && $text == $answers[$chatId]) {
+            } elseif (isset(json_decode(file_get_contents('tg.json'), true)[$chatId])
+                && $text == json_decode(file_get_contents('tg.json'), true)[$chatId]) {
 
                 $telebot->sendMessage($chatId, "https://www.youtube.com/watch?v=jxCK3PbnL2U");
+                $answers[] = json_decode(file_get_contents('tg.json'), true);
 
                 unset($answers[$chatId]);
-                file_put_contents('tg.json',json_encode($answers[]));
+                file_put_contents('tg.json', json_encode($answers));
 
             } else {
                 $telebot->sendMessage($chatId, "Пробуй ещё раз!");
