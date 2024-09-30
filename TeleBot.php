@@ -2,7 +2,6 @@
 
 class TeleBot
 {
-
     private string $token;
     public int $offset = 0;
 
@@ -11,14 +10,16 @@ class TeleBot
         $this->token = file_get_contents('.env');
     }
 
-    public function sendMessage($chatId, $text)
+    public function sendMessage($chatId, $text): bool|string
     {
         $url = "https://api.telegram.org/bot{$this->token}/sendMessage?";
         $data = ['chat_id' => $chatId, 'text' => $text];
+
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+
         $response = curl_exec($ch);
         curl_close($ch);
         return $response;
@@ -52,5 +53,4 @@ class TeleBot
         }
         return $response['result'];
     }
-
 }
