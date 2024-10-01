@@ -25,9 +25,9 @@ class TeleBot
         return $response;
     }
 
-    private function query($params = [])
+    private function query($params = []): array
     {
-        $url = "https://api.telegram.org/bot" . $this->token . "/" . 'getUpdates';
+        $url = "https://api.telegram.org/bot{$this->token}/getUpdates";
 
         if (!empty($params)) {
             $url .= "?" . http_build_query($params);

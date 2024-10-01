@@ -1,12 +1,12 @@
 <?php
 
-class Service
+class UserAnswersJsonService
 {
     public function saveAnswer(string $chatId, string $correctAnswer): void
     {
-        $newAnswer= [
-          'id'=>$chatId,
-          'answer'=>$correctAnswer
+        $newAnswer = [
+            'id' => $chatId,
+            'answer' => $correctAnswer
         ];
 
         $answers = json_decode(file_get_contents('tg.json'), true);
@@ -19,9 +19,9 @@ class Service
     {
         $answersToWrite = json_decode(file_get_contents('tg.json'), true);
 
-        foreach ($answersToWrite as $key=>$answer) {
+        foreach ($answersToWrite as $key => $answer) {
 
-            if ($answer['id']===$chatId){
+            if ($answer['id'] === $chatId) {
                 unset($answersToWrite[$key]);
                 file_put_contents('tg.json', json_encode($answersToWrite));
                 break;
@@ -31,14 +31,14 @@ class Service
 
     public function isSetChatId(string $chatId): bool
     {
-        $users=json_decode(file_get_contents('tg.json'), true);
+        $users = json_decode(file_get_contents('tg.json'), true);
 
-        $result=false;
-        foreach ($users as  $user) {
+        $result = false;
+        foreach ($users as $user) {
 
-            if ($user['id'] ==$chatId){
+            if ($user['id'] == $chatId) {
 
-                $result=true;
+                $result = true;
                 break;
             }
         }
@@ -48,12 +48,26 @@ class Service
     public function isCompareText(string $chatId, string $text): bool
     {
         $users = json_decode(file_get_contents('tg.json'), true);
-        $result=false;
+        $result = false;
 
-        foreach ($users as  $user){
+        foreach ($users as $user) {
 
-            if ($user['id']==$chatId && $user['answer']==$text){
-                $result=true;
+            if ($user['id'] == $chatId && $user['answer'] == $text) {
+                $result = true;
+                break;
+            }
+        }
+        return $result;
+    }
+
+    public function isUserAnswered($chatId): bool
+    {
+        $users = json_decode(file_get_contents('tg.json'), true);
+        $result = true;
+
+        foreach ($users as $user) {
+            if ($user['id'] == $chatId) {
+                $result = false;
                 break;
             }
         }
