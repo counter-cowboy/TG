@@ -1,9 +1,9 @@
 <?php
 
- readonly class TgDTO
+ class TgDTO
 {
-    public string $chatId;
-    public string $text;
+    public readonly string $chatId;
+    public readonly string $text;
 
     public function __construct(array $update)
     {
