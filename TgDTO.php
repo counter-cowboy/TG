@@ -11,4 +11,5 @@
         $this->text = mb_strtolower($update['message']['text']);
     }
 
+
 }
