@@ -1,7 +1,15 @@
 <?php
+require_once 'TeleBot.php';
 
 class UserAnswersJsonService
 {
+    private TeleBot $telebot;
+
+    public function __construct()
+    {
+        $this->telebot=new TeleBot();
+    }
+
     public function saveAnswer(string $chatId, string $correctAnswer): void
     {
         $newAnswer = [
@@ -37,7 +45,6 @@ class UserAnswersJsonService
         foreach ($users as $user) {
 
             if ($user['id'] == $chatId) {
-
                 $result = true;
                 break;
             }
@@ -60,7 +67,7 @@ class UserAnswersJsonService
         return $result;
     }
 
-    public function isUserAnswered($chatId): bool
+    public function isUserAnswered(string $chatId): bool
     {
         $users = json_decode(file_get_contents('tg.json'), true);
         $result = true;
@@ -73,5 +80,4 @@ class UserAnswersJsonService
         }
         return $result;
     }
-
 }

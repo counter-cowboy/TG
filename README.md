@@ -1,6 +1,6 @@
 Create your TG-bot.
 
-Create file .env. 
+Create file "api_token". 
 
 Put your token into it.
 

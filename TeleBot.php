@@ -1,50 +1,42 @@
 <?php
+require_once 'GetTgToken.php';
+require_once 'HttpQuery.php';
 
 class TeleBot
 {
     private string $token;
     public int $offset = 0;
+    public string $baseUrl;
+    public HttpQuery $request;
 
     public function __construct()
     {
-        $this->token = file_get_contents('.env');
+        $this->token = GetTgToken::getToken();
+        $this->baseUrl = "https://api.telegram.org/bot";
+        $this->request = new HttpQuery();
     }
 
-    public function sendMessage($chatId, $text): bool|string
+    public function sendMessage(string $chatId, string $text): string
     {
-        $url = "https://api.telegram.org/bot{$this->token}/sendMessage?";
+        $url = $this->baseUrl . $this->token . "/sendMessage?";
         $data = ['chat_id' => $chatId, 'text' => $text];
 
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-
-        $response = curl_exec($ch);
-        curl_close($ch);
-        return $response;
+        return $this->request->httpPost($url, $data);
     }
 
-    private function query($params = []): array
+    private function query(array $params = []): array
     {
-        $url = "https://api.telegram.org/bot{$this->token}/getUpdates";
+        $url = $this->baseUrl . $this->token . "/getUpdates";
 
         if (!empty($params)) {
             $url .= "?" . http_build_query($params);
         }
 
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_HEADER, false);
-        $result = curl_exec($ch);
-
-        curl_close($ch);
-
+        $result = $this->request->httpGet($url);
         return json_decode($result, true);
     }
 
-    public function getUpdates()
+    public function getUpdates(): array
     {
         $response = $this->query(['offset' => $this->offset + 1]);
 
