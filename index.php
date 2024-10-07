@@ -16,7 +16,8 @@ while (true) {
 
     foreach ($updates as $update) {
 
-        $dto = new TgDTO($update);
+        $dto = new TgDTO($update['message']['chat']['id'],
+                        mb_strtolower($update['message']['text']));
 
         if (!isset($update['message'])) {
             continue;
